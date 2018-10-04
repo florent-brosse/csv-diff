@@ -1,0 +1,5 @@
+dependency-reduced-pom.xml
+*.csv
+spark-warehouse/
+target/
+.*
