@@ -41,20 +41,7 @@ public class Launcher {
 			if (line.hasOption("old-path") && line.hasOption("new-path") && line.hasOption("created-path")
 					&& line.hasOption("updated-path") && line.hasOption("deleted-path")
 					&& line.hasOption("primary-keys")) {
-
-				SparkSession spark = SparkSession.builder().appName("CSV diff").config("spark.ui.enabled", false)
-						.master("local[*]").getOrCreate();
-
-				Dataset<Row> dfold = spark.read().format("csv").option("header", "true").option("mode", "FAILFAST").load(line.getOptionValue("old-path"));
-				Dataset<Row> dfnew = spark.read().format("csv").option("header", "true").option("mode", "FAILFAST").load(line.getOptionValue("new-path"));
-				List<String> pks = Arrays.asList(line.getOptionValues("primary-keys"));
-				Tuple3<Dataset<Row>, Dataset<Row>, Dataset<Row>> resp = DiffDataframe.diff(dfold, dfnew,
-						JavaConverters.asScalaIteratorConverter(pks.iterator()).asScala().toSet());
-
-				resp._1().coalesce(1).write().mode(SaveMode.Overwrite).format("csv").option("header", "true").save(line.getOptionValue("created-path"));
-				resp._2().coalesce(1).write().mode(SaveMode.Overwrite).format("csv").option("header", "true").save(line.getOptionValue("deleted-path"));
-				resp._3().coalesce(1).write().mode(SaveMode.Overwrite).format("csv").option("header", "true").save(line.getOptionValue("updated-path"));
-
+				launchDiff(line);
 			} else {
 				formatter.printHelp("csv-diff", options);
 			}
@@ -63,6 +50,21 @@ public class Launcher {
 			formatter.printHelp("csv-diff", options);
 		}
 		
+	}
+
+	private static void launchDiff(CommandLine line) {
+		SparkSession spark = SparkSession.builder().appName("CSV diff").config("spark.ui.enabled", false)
+				.master("local[*]").getOrCreate();
+
+		Dataset<Row> dfold = spark.read().format("csv").option("header", "true").option("mode", "FAILFAST").load(line.getOptionValue("old-path"));
+		Dataset<Row> dfnew = spark.read().format("csv").option("header", "true").option("mode", "FAILFAST").load(line.getOptionValue("new-path"));
+		List<String> pks = Arrays.asList(line.getOptionValues("primary-keys"));
+		Tuple3<Dataset<Row>, Dataset<Row>, Dataset<Row>> resp = DiffDataframe.diff(dfold, dfnew,
+				JavaConverters.asScalaIteratorConverter(pks.iterator()).asScala().toSet());
+
+		resp._1().coalesce(1).write().mode(SaveMode.Overwrite).format("csv").option("header", "true").save(line.getOptionValue("created-path"));
+		resp._2().coalesce(1).write().mode(SaveMode.Overwrite).format("csv").option("header", "true").save(line.getOptionValue("deleted-path"));
+		resp._3().coalesce(1).write().mode(SaveMode.Overwrite).format("csv").option("header", "true").save(line.getOptionValue("updated-path"));
 	}
 
 }
