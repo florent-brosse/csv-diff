@@ -27,11 +27,11 @@ public class Launcher {
 		HelpFormatter formatter = new HelpFormatter();
 		
 		Options options = new Options();
-		options.addOption( "po", "old-path", true, "path of the old csv file (could be hdfs:/// or file:/// or relative path" );
-		options.addOption( "pn", "new-path", true, "path of the new csv file (could be hdfs:/// or file:/// or relative path" );
-		options.addOption( "pc", "created-path", true, "output csv file path of the new rows (could be hdfs:/// or file:/// or relative path" );
-		options.addOption( "pu", "updated-path", true, "output csv file path of the updated rows(could be hdfs:/// or file:/// or relative path" );
-		options.addOption( "pd", "deleted-path", true, "output csv file path of the deleted rows (could be hdfs:/// or file:/// or relative path" );
+		options.addOption( "op", "old-path", true, "path of the old csv file (could be hdfs:/// or file:/// or relative path" );
+		options.addOption( "np", "new-path", true, "path of the new csv file (could be hdfs:/// or file:/// or relative path" );
+		options.addOption( "cp", "created-path", true, "output csv file path of the new rows (could be hdfs:/// or file:/// or relative path" );
+		options.addOption( "up", "updated-path", true, "output csv file path of the updated rows(could be hdfs:/// or file:/// or relative path" );
+		options.addOption( "dp", "deleted-path", true, "output csv file path of the deleted rows (could be hdfs:/// or file:/// or relative path" );
 		options.addOption(Option.builder("pk").longOpt("primary-keys").desc("primary keys of the input csv files").hasArgs().build());
 		
 		try {
